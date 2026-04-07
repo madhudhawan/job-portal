@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Post a Job</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"/>
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { background-color: #198754; }
+        .navbar-brand, .nav-link { color: white !important; }
+        .post-card { max-width: 600px; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🏢 Job Portal</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/recruiter/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/recruiter/post-job">Post Job</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post">
+                        <button class="btn btn-outline-light btn-sm mt-1">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card p-4 post-card">
+        <h4 class="mb-4">📢 Post a New Job</h4>
+
+        <form th:action="@{/recruiter/post-job}"
+              th:object="${job}"
+              method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Job Title</label>
+                <input type="text"
+                       th:field="*{title}"
+                       class="form-control"
+                       placeholder="e.g. Java Backend Developer"
+                       required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Company Name</label>
+                <input type="text"
+                       th:field="*{companyName}"
+                       class="form-control"
+                       placeholder="e.g. TCS, Infosys"
+                       required/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Job Description</label>
+                <textarea th:field="*{description}"
+                          class="form-control"
+                          rows="4"
+                          placeholder="Describe the job role and responsibilities"
+                          required>
+                </textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">
+                    Required Skills
+                    <small class="text-muted">
+                        (comma separated — e.g. java,spring boot,mysql)
+                    </small>
+                </label>
+                <input type="text"
+                       th:field="*{requiredSkills}"
+                       class="form-control"
+                       placeholder="java,spring boot,mysql,rest api"
+                       required/>
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success w-100">
+                📢 Post Job
+            </button>
+
+        </form>
+    </div>
+</div>
+</body>
+</html>

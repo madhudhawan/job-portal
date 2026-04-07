@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Candidate Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet"/>
+    <style>
+        body { background-color: #f8f9fa; }
+        .navbar { background-color: #0d6efd; }
+        .navbar-brand, .nav-link { color: white !important; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🏢 Job Portal</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/candidate/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/candidate/jobs">Browse Jobs</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post">
+                        <button class="btn btn-outline-light btn-sm mt-1">
+                            Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- Welcome message -->
+    <h4 class="mb-4">
+        Welcome, <span th:text="${candidate.fullName}"></span>! 👋
+    </h4>
+
+    <!-- Success message -->
+    <div th:if="${param.applied}"
+         class="alert alert-success">
+        ✅ Application submitted successfully!
+    </div>
+
+    <!-- My Applications -->
+    <div class="card p-4 mb-4">
+        <h5 class="mb-3">📋 My Applications</h5>
+
+        <!-- No applications yet -->
+        <div th:if="${#lists.isEmpty(applications)}"
+             class="text-muted">
+            You have not applied to any jobs yet.
+            <a href="/candidate/jobs">Browse jobs here</a>
+        </div>
+
+        <!-- Applications table -->
+        <table th:if="${!#lists.isEmpty(applications)}"
+               class="table table-hover">
+            <thead class="table-primary">
+                <tr>
+                    <th>Job Title</th>
+                    <th>Company</th>
+                    <th>Match Score</th>
+                    <th>Status</th>
+                    <th>Skills Found</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="app : ${applications}">
+                    <td th:text="${app.job.title}"></td>
+                    <td th:text="${app.job.companyName}"></td>
+
+                    <!-- Color code the score -->
+                    <td>
+                        <span th:if="${app.matchScore >= 70}"
+                              style="color:green; font-weight:bold"
+                              th:text="${app.matchScore} + '%'">
+                        </span>
+                        <span th:if="${app.matchScore >= 40 and app.matchScore < 70}"
+                              style="color:orange; font-weight:bold"
+                              th:text="${app.matchScore} + '%'">
+                        </span>
+                        <span th:if="${app.matchScore < 40}"
+                              style="color:red; font-weight:bold"
+                              th:text="${app.matchScore} + '%'">
+                        </span>
+                    </td>
+
+                    <!-- Color code the status -->
+                    <td>
+                        <span th:if="${app.status == 'PENDING'}"
+                              class="badge bg-warning text-dark"
+                              th:text="${app.status}">
+                        </span>
+                        <span th:if="${app.status == 'ACCEPTED'}"
+                              class="badge bg-success"
+                              th:text="${app.status}">
+                        </span>
+                        <span th:if="${app.status == 'REJECTED'}"
+                              class="badge bg-danger"
+                              th:text="${app.status}">
+                        </span>
+                    </td>
+
+                    <td th:text="${app.extractedSkills}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Quick link -->
+    <a href="/candidate/jobs" class="btn btn-primary">
+        🔍 Browse All Jobs
+    </a>
+
+</div>
+</body>
+</html>
