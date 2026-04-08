@@ -89,60 +89,95 @@ public class RecruiterController {
 
     
     // Update Status + Send Email
-    @PostMapping("/update-status/{appId}")
+//    @PostMapping("/update-status/{appId}")
+//    public String updateStatus(
+//            @PathVariable Long appId,
+//            @RequestParam("status") String status) {
+//
+//        Application application =
+//                applicationRepository.findById(appId).orElse(null);
+//
+//        if (application == null) {
+//            return "redirect:/recruiter/dashboard";
+//        }
+//
+//        // Store jobId BEFORE update (safe navigation)
+//        Long jobId = application.getJob().getId();
+//
+//        // Update status
+//        application.setStatus(status.toUpperCase());
+//        applicationRepository.save(application);
+//
+//        // Candidate + Job details
+//        String candidateEmail = application.getCandidate().getEmail();
+//        String candidateName  = application.getCandidate().getFullName();
+//        String jobTitle       = application.getJob().getTitle();
+//        String companyName    = application.getJob().getCompanyName();
+//
+//        // Send Email
+//        try {
+//            if ("ACCEPTED".equalsIgnoreCase(status)) {
+//
+//                emailService.sendAcceptanceEmail(
+//                        candidateEmail,
+//                        candidateName,
+//                        jobTitle,
+//                        companyName
+//                );
+//
+//                System.out.println("✅ Acceptance email sent to: " + candidateEmail);
+//
+//            } else if ("REJECTED".equalsIgnoreCase(status)) {
+//
+//                emailService.sendRejectionEmail(
+//                        candidateEmail,
+//                        candidateName,
+//                        jobTitle,
+//                        companyName
+//                );
+//
+//                System.out.println("✅ Rejection email sent to: " + candidateEmail);
+//            }
+//
+//        } catch (Exception e) {
+//            System.out.println("⚠️ Email failed: " + e.getMessage());
+//        }
+//
+//        return "redirect:/recruiter/applicants/" + jobId;
+//    }
+    @PostMapping("/update-status/{id}")
     public String updateStatus(
-            @PathVariable Long appId,
-            @RequestParam("status") String status) {
+            @PathVariable Long id,
+            @RequestParam String status) {
 
-        Application application =
-                applicationRepository.findById(appId).orElse(null);
+        Application app = applicationRepository.findById(id).orElse(null);
 
-        if (application == null) {
-            return "redirect:/recruiter/dashboard";
-        }
+        if (app != null) {
+            app.setStatus(status);
+            applicationRepository.save(app);
 
-        // Store jobId BEFORE update (safe navigation)
-        Long jobId = application.getJob().getId();
-
-        // Update status
-        application.setStatus(status.toUpperCase());
-        applicationRepository.save(application);
-
-        // Candidate + Job details
-        String candidateEmail = application.getCandidate().getEmail();
-        String candidateName  = application.getCandidate().getFullName();
-        String jobTitle       = application.getJob().getTitle();
-        String companyName    = application.getJob().getCompanyName();
-
-        // Send Email
-        try {
-            if ("ACCEPTED".equalsIgnoreCase(status)) {
-
-                emailService.sendAcceptanceEmail(
-                        candidateEmail,
-                        candidateName,
-                        jobTitle,
-                        companyName
-                );
-
-                System.out.println("✅ Acceptance email sent to: " + candidateEmail);
-
-            } else if ("REJECTED".equalsIgnoreCase(status)) {
-
-                emailService.sendRejectionEmail(
-                        candidateEmail,
-                        candidateName,
-                        jobTitle,
-                        companyName
-                );
-
-                System.out.println("✅ Rejection email sent to: " + candidateEmail);
+            // 🔥 SEND EMAIL HERE
+            try {
+                if (status.equals("ACCEPTED")) {
+                    emailService.sendAcceptanceEmail(
+                        app.getCandidate().getEmail(),
+                        app.getCandidate().getFullName(),
+                        app.getJob().getTitle(),
+                        app.getJob().getCompanyName()
+                    );
+                } else if (status.equals("REJECTED")) {
+                    emailService.sendRejectionEmail(
+                        app.getCandidate().getEmail(),
+                        app.getCandidate().getFullName(),
+                        app.getJob().getTitle(),
+                        app.getJob().getCompanyName()
+                    );
+                }
+            } catch (Exception e) {
+                System.out.println("Email failed: " + e.getMessage());
             }
-
-        } catch (Exception e) {
-            System.out.println("⚠️ Email failed: " + e.getMessage());
         }
 
-        return "redirect:/recruiter/applicants/" + jobId;
+        return "redirect:/recruiter/applicants/" + app.getJob().getId();
     }
 }
