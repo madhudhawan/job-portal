@@ -12,12 +12,11 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    // Gets your gmail from application.properties automatically
     @Value("${spring.mail.username}")
     private String fromEmail;
 
     // ==============================
-    // Send email when candidate is ACCEPTED
+    // ACCEPT EMAIL
     // ==============================
     public void sendAcceptanceEmail(
             String toEmail,
@@ -25,31 +24,34 @@ public class EmailService {
             String jobTitle,
             String companyName) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        System.out.println("🔥 EMAIL METHOD CALLED - ACCEPT");
+        System.out.println("📧 Sending to: " + toEmail);
 
+        SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
-        message.setSubject(
-            "🎉 Congratulations! Selected for " + jobTitle + " at " + companyName
-        );
+        message.setSubject("🎉 Selected for " + jobTitle);
+
         message.setText(
-            "Dear " + candidateName + ",\n\n" +
-            "Congratulations! 🎉\n\n" +
-            "We are pleased to inform you that you have been SELECTED " +
-            "for the position of " + jobTitle + " at " + companyName + ".\n\n" +
-            "Our recruitment team will contact you shortly with " +
-            "further details about the next steps.\n\n" +
-            "Best regards,\n" +
-            companyName + " Recruitment Team\n\n" +
-            "---\n" +
-            "This is an automated email from Job Portal."
+                "Dear " + candidateName + ",\n\n" +
+                "Congratulations! 🎉\n\n" +
+                "You are selected for " + jobTitle + " at " + companyName + ".\n\n" +
+                "We will contact you soon.\n\n" +
+                "Regards,\n" +
+                companyName + " Team"
         );
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+            System.out.println("✅ ACCEPT EMAIL SENT");
+        } catch (Exception e) {
+            System.out.println("❌ ACCEPT EMAIL ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // ==============================
-    // Send email when candidate is REJECTED
+    // REJECT EMAIL
     // ==============================
     public void sendRejectionEmail(
             String toEmail,
@@ -57,33 +59,34 @@ public class EmailService {
             String jobTitle,
             String companyName) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        System.out.println("🔥 EMAIL METHOD CALLED - REJECT");
+        System.out.println("📧 Sending to: " + toEmail);
 
+        SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
-        message.setSubject(
-            "Application Update — " + jobTitle + " at " + companyName
-        );
+        message.setSubject("Application Update - " + jobTitle);
+
         message.setText(
-            "Dear " + candidateName + ",\n\n" +
-            "Thank you for applying for the position of " +
-            jobTitle + " at " + companyName + ".\n\n" +
-            "After careful consideration, we regret to inform you " +
-            "that we will not be moving forward with your application " +
-            "at this time.\n\n" +
-            "We appreciate your interest and encourage you to apply " +
-            "for future openings that match your skills.\n\n" +
-            "Best regards,\n" +
-            companyName + " Recruitment Team\n\n" +
-            "---\n" +
-            "This is an automated email from Job Portal."
+                "Dear " + candidateName + ",\n\n" +
+                "Thank you for applying for " + jobTitle + " at " + companyName + ".\n\n" +
+                "We regret to inform you that you are not selected.\n\n" +
+                "Best wishes for future.\n\n" +
+                "Regards,\n" +
+                companyName + " Team"
         );
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+            System.out.println("❌ REJECT EMAIL SENT");
+        } catch (Exception e) {
+            System.out.println("❌ REJECT EMAIL ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     // ==============================
-    // Send email when candidate successfully applies
+    // APPLY EMAIL
     // ==============================
     public void sendApplicationConfirmationEmail(
             String toEmail,
@@ -92,40 +95,29 @@ public class EmailService {
             String companyName,
             double matchScore) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
+        System.out.println("🔥 EMAIL METHOD CALLED - APPLY");
+        System.out.println("📧 Sending to: " + toEmail);
 
+        SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(fromEmail);
         message.setTo(toEmail);
-        message.setSubject(
-            "Application Received — " + jobTitle + " at " + companyName
-        );
-//        message.setText(
-//            "Dear " + candidateName + ",\n\n" +
-//            "Your application has been successfully submitted! ✅\n\n" +
-//            "Position  : " + jobTitle + "\n" +
-//            "Company   : " + companyName + "\n" +
-//            "Our recruitment team will review your application " +
-//            "and get back to you soon.\n\n" +
-//            "Best regards,\n" +
-//            "Job Portal Team\n\n" +
-//            "---\n" +
-//            "This is an automated email from Job Portal."
-//        );
-//
-//        mailSender.send(message);
+        message.setSubject("Application Received - " + jobTitle);
+
         message.setText(
-        	    "Dear " + candidateName + ",\n\n" +
-        	    "Your application has been successfully submitted! ✅\n\n" +
-        	    "Position  : " + jobTitle + "\n" +
-        	    "Company   : " + companyName + "\n\n" +
-        	    // ← score line removed completely
-        	    "Our recruitment team will review your " +
-        	    "application and get back to you soon.\n\n" +
-        	    "Best regards,\n" +
-        	    "Job Portal Team\n\n" +
-        	    "---\n" +
-        	    "This is an automated email from Job Portal."
-        	);
-        mailSender.send(message);
+                "Dear " + candidateName + ",\n\n" +
+                "Your application has been successfully submitted! ✅\n\n" +
+                "Position: " + jobTitle + "\n" +
+                "Company: " + companyName + "\n\n" +
+                "We will review and get back to you.\n\n" +
+                "Regards,\nJob Portal Team"
+        );
+
+        try {
+            mailSender.send(message);
+            System.out.println("✅ APPLY EMAIL SENT");
+        } catch (Exception e) {
+            System.out.println("❌ APPLY EMAIL ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
